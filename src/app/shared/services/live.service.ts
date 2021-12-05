@@ -9,7 +9,9 @@ import { ResponsePageable } from '../model/responsePageable.model';
 })
 export class LiveService {
 
-  url = 'http://localhost:8080/lives'
+  url = 'https://backend-live-spring.herokuapp.com/lives'
+  notificationUrlLives = 'https://microservice-email1.herokuapp.com/sending-email'
+
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type':'application/json'
@@ -29,4 +31,20 @@ export class LiveService {
   public postLives(live:any):Observable<Live>{
     return this.httpClient.post<any>(this.url,live, this.httpOptions)
   } 
+
+  public postNotification(live: any):Observable<any> {
+    console.log(live)
+    const text = `Nome da live: ${live.liveName} \n Nome canal: ${live.channelName} \n Link live: ${live.liveLink}`
+
+    const email = {
+      "ownerRef": "Cadastro live",
+      "emailFrom": "skaterafaf14@gmail.com", 		
+      "emailTo": "rafaelbatistacg@gmail.com",
+      "subject": "Live cadastrada com sucesso",
+      "text": text
+    }
+
+    return this.httpClient.post<any>(this.notificationUrlLives, email, this.httpOptions)
+  }
+
 }
